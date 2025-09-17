@@ -73,6 +73,10 @@ class _StickersExampleState extends State<StickersExample>
           enabled: true,
           builder: _buildStickers,
         ),
+        stickerEditor2: StickerEditorConfigs(
+          enabled: true,
+          builder: _buildStickers,
+        ),
       ),
     );
   }
