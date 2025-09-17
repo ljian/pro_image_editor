@@ -95,6 +95,7 @@ class ProImageEditorConfigs {
     this.blurEditor = const BlurEditorConfigs(),
     this.emojiEditor = const EmojiEditorConfigs(),
     this.stickerEditor = const StickerEditorConfigs(),
+    this.stickerEditor2 = const StickerEditorConfigs(),
     this.stateHistory = const StateHistoryConfigs(),
     this.imageGeneration = const ImageGenerationConfigs(),
     this.helperLines = const HelperLineConfigs(),
@@ -146,6 +147,7 @@ class ProImageEditorConfigs {
 
   /// Configuration options for the Sticker Editor.
   final StickerEditorConfigs stickerEditor;
+  final StickerEditorConfigs stickerEditor2;
 
   /// The design mode for the Image Editor.
   final ImageEditorDesignMode designMode;
@@ -184,6 +186,7 @@ class ProImageEditorConfigs {
     BlurEditorConfigs? blurEditor,
     EmojiEditorConfigs? emojiEditor,
     StickerEditorConfigs? stickerEditor,
+    StickerEditorConfigs? stickerEditor2,
     ImageEditorDesignMode? designMode,
     DialogConfigs? dialogConfigs,
     ProgressIndicatorConfigs? progressIndicatorConfigs,
@@ -206,6 +209,7 @@ class ProImageEditorConfigs {
       blurEditor: blurEditor ?? this.blurEditor,
       emojiEditor: emojiEditor ?? this.emojiEditor,
       stickerEditor: stickerEditor ?? this.stickerEditor,
+      stickerEditor2: stickerEditor2 ?? this.stickerEditor2,
       designMode: designMode ?? this.designMode,
       dialogConfigs: dialogConfigs ?? this.dialogConfigs,
       progressIndicatorConfigs:

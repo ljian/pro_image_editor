@@ -33,6 +33,7 @@ mixin ImageEditorConvertedConfigs {
 
   /// Returns the configuration options for the sticker editor.
   StickerEditorConfigs get stickerEditorConfigs => configs.stickerEditor;
+  StickerEditorConfigs get stickerEditorConfigs2 => configs.stickerEditor2;
 
   /// Returns the design mode for the image editor.
   ImageEditorDesignMode get designMode => configs.designMode;
