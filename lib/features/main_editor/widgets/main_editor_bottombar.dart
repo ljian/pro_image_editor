@@ -117,8 +117,8 @@ class MainEditorBottombar extends StatelessWidget {
                           sizesManager.lastScreenSize.width != 0
                               ? sizesManager.lastScreenSize.width
                               : constraints.maxWidth,
-                          600),
-                      maxWidth: 600,
+                          675),
+                      maxWidth: 675,
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
