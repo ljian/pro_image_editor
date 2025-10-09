@@ -76,6 +76,7 @@ class _StickersExampleState extends State<StickersExample>
         stickerEditor2: StickerEditorConfigs(
           enabled: true,
           builder: _buildStickers,
+          icons: StickerEditorIcons(bottomNavBarImage: Image.asset('assets/demo.png', width: 50, height: 50)),
         ),
       ),
     );

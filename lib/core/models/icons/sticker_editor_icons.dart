@@ -22,10 +22,12 @@ class StickerEditorIcons {
   /// ```
   const StickerEditorIcons({
     this.bottomNavBar = ProImageEditorIcons.stickers,
+    this.bottomNavBarImage = null,
   });
 
   /// The icon to be displayed in the bottom navigation bar.
   final IconData bottomNavBar;
+  final Image? bottomNavBarImage;
 
   /// Creates a copy of this `IconsStickerEditor` object with the given fields
   /// replaced with new values.
@@ -35,9 +37,11 @@ class StickerEditorIcons {
   /// others unchanged.
   StickerEditorIcons copyWith({
     IconData? bottomNavBar,
+    Image? bottomNavBarImage,
   }) {
     return StickerEditorIcons(
       bottomNavBar: bottomNavBar ?? this.bottomNavBar,
+      bottomNavBarImage: bottomNavBarImage ?? this.bottomNavBarImage,
     );
   }
 }

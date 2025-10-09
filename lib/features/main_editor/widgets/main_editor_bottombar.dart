@@ -195,6 +195,7 @@ class MainEditorBottombar extends StatelessWidget {
           key: const ValueKey('open-sticker-editor-btn2'),
           label: configs.i18n.stickerEditor.bottomNavigationBarText,
           icon: configs.stickerEditor2.icons.bottomNavBar,
+          iconImage: configs.stickerEditor2.icons.bottomNavBarImage,
           onPressed: openStickerEditor2,
         ),
       if (configs.stickerEditor.enabled)
@@ -213,11 +214,12 @@ class MainEditorBottombar extends StatelessWidget {
     required String label,
     required IconData icon,
     required VoidCallback onPressed,
+    Image? iconImage,
   }) {
     return FlatIconTextButton(
       key: key,
       label: Text(label, style: _bottomTextStyle),
-      icon: Icon(icon, size: _bottomIconSize, color: _foregroundColor),
+      icon: iconImage ?? Icon(icon, size: _bottomIconSize, color: _foregroundColor),
       onPressed: onPressed,
     );
   }
