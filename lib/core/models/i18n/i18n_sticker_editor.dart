@@ -17,9 +17,11 @@ class I18nStickerEditor {
   /// ```
   const I18nStickerEditor({
     this.bottomNavigationBarText = 'Stickers',
+    this.bottomNavigationBarText2 = 'HotStickers',
   });
 
   /// Text for the bottom navigation bar item that opens the I18nStickerEditor
   /// Editor.
   final String bottomNavigationBarText;
+  final String bottomNavigationBarText2;
 }
