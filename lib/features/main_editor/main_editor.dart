@@ -1902,7 +1902,7 @@ class ProImageEditorState extends State<ProImageEditor>
           snapAnimationDuration: sheetTheme.snapAnimationDuration,
           snapSizes: sheetTheme.snapSizes,
           builder: (_, controller) {
-            return StickerEditor(
+            return StickerEditor2(
               configs: configs,
               scrollController: controller,
             );

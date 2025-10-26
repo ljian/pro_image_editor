@@ -67,3 +67,62 @@ class StickerEditorState extends State<StickerEditor>
     Navigator.of(context).pop(widgetLayer);
   }
 }
+
+class StickerEditor2 extends StatefulWidget with SimpleConfigsAccess {
+  /// Creates an `StickerEditor` widget.
+  const StickerEditor2({
+    super.key,
+    required this.configs,
+    this.callbacks = const ProImageEditorCallbacks(),
+    required this.scrollController,
+  });
+  @override
+  final ProImageEditorConfigs configs;
+
+  @override
+  final ProImageEditorCallbacks callbacks;
+
+  /// Controller for managing scroll actions.
+  final ScrollController scrollController;
+
+  @override
+  createState() => StickerEditorState2();
+}
+
+/// The state class for the `StickerEditor` widget.
+class StickerEditorState2 extends State<StickerEditor2>
+    with ImageEditorConvertedConfigs, SimpleConfigsAccessState {
+  /// Closes the editor without applying changes.
+  void close() {
+    Navigator.pop(context);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    callbacks.stickerEditorCallbacks?.onInit?.call();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      callbacks.stickerEditorCallbacks?.onAfterViewInit?.call();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    assert(
+    stickerEditorConfigs2.builder != null,
+    '`builder` is required',
+    );
+
+    return ExtendedPopScope(
+      child: stickerEditorConfigs2.builder!.call(
+        setLayer,
+        widget.scrollController,
+      ),
+    );
+  }
+
+  /// Close the editor with the selected widget-layer.
+  void setLayer(WidgetLayer widgetLayer) {
+    Navigator.of(context).pop(widgetLayer);
+  }
+}
