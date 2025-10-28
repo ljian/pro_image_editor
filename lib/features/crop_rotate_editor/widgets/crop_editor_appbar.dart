@@ -79,7 +79,7 @@ class CropEditorAppbar extends StatelessWidget implements PreferredSizeWidget {
           IconButton(
             tooltip: i18n.back,
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            icon: Icon(configs.icons.backButton),
+            icon: Icon(configs.icons.backButton, color: Colors.white,),
             onPressed: onClose,
           ),
         const Spacer(),
@@ -111,7 +111,7 @@ class CropEditorAppbar extends StatelessWidget implements PreferredSizeWidget {
     return IconButton(
       tooltip: i18n.done,
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      icon: Icon(configs.icons.applyChanges),
+      icon: Icon(configs.icons.applyChanges, color: Colors.white),
       iconSize: 28,
       onPressed: onDone,
     );
