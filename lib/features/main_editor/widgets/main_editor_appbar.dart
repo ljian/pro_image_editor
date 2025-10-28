@@ -68,7 +68,7 @@ class MainEditorAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: mainEditorConfigs.enableCloseButton
           ? IconButton(
               tooltip: i18n.cancel,
-              icon: Icon(mainEditorConfigs.icons.closeEditor, color: Colors.white,),
+              icon: Icon(mainEditorConfigs.icons.closeEditor),
               onPressed: closeEditor,
             )
           : null,
@@ -106,7 +106,7 @@ class MainEditorAppBar extends StatelessWidget implements PreferredSizeWidget {
             : IconButton(
                 key: const ValueKey('MainEditorDoneButton'),
                 tooltip: i18n.done,
-                icon: Icon(mainEditorConfigs.icons.doneIcon, color: Colors.white,),
+                icon: Icon(mainEditorConfigs.icons.doneIcon),
                 iconSize: 28,
                 onPressed: doneEditing,
               ),
