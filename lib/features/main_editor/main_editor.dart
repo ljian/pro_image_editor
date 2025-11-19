@@ -1848,23 +1848,30 @@ class ProImageEditorState extends State<ProImageEditor>
       showDragHandle: stickerEditorConfigs.style.showDragHandle,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (_) => SafeArea(
-        child: DraggableScrollableSheet(
-          expand: sheetTheme.expand,
-          initialChildSize: sheetTheme.initialChildSize,
-          maxChildSize: sheetTheme.maxChildSize,
-          minChildSize: sheetTheme.minChildSize,
-          shouldCloseOnMinExtent: sheetTheme.shouldCloseOnMinExtent,
-          snap: sheetTheme.snap,
-          snapAnimationDuration: sheetTheme.snapAnimationDuration,
-          snapSizes: sheetTheme.snapSizes,
-          builder: (_, controller) {
-            return StickerEditor(
-              configs: configs,
-              scrollController: controller,
-            );
-          },
-        ),
+      builder: (context2) => LayoutBuilder(
+        builder: (context, constraints) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.7,
+            child: SafeArea(
+              child: DraggableScrollableSheet(
+                expand: sheetTheme.expand,
+                initialChildSize: sheetTheme.initialChildSize,
+                maxChildSize: sheetTheme.maxChildSize,
+                minChildSize: sheetTheme.minChildSize,
+                shouldCloseOnMinExtent: sheetTheme.shouldCloseOnMinExtent,
+                snap: sheetTheme.snap,
+                snapAnimationDuration: sheetTheme.snapAnimationDuration,
+                snapSizes: sheetTheme.snapSizes,
+                builder: (_, controller) {
+                  return StickerEditor(
+                    configs: configs,
+                    scrollController: controller,
+                  );
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
     ServicesBinding.instance.keyboard.addHandler(_onKeyEvent);
@@ -1891,23 +1898,30 @@ class ProImageEditorState extends State<ProImageEditor>
       showDragHandle: stickerEditorConfigs.style.showDragHandle,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (_) => SafeArea(
-        child: DraggableScrollableSheet(
-          expand: sheetTheme.expand,
-          initialChildSize: sheetTheme.initialChildSize,
-          maxChildSize: sheetTheme.maxChildSize,
-          minChildSize: sheetTheme.minChildSize,
-          shouldCloseOnMinExtent: sheetTheme.shouldCloseOnMinExtent,
-          snap: sheetTheme.snap,
-          snapAnimationDuration: sheetTheme.snapAnimationDuration,
-          snapSizes: sheetTheme.snapSizes,
-          builder: (_, controller) {
-            return StickerEditor2(
-              configs: configs,
-              scrollController: controller,
-            );
-          },
-        ),
+      builder: (context2) => LayoutBuilder(
+        builder: (context, constraints) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.7,
+            child: SafeArea(
+              child: DraggableScrollableSheet(
+                expand: sheetTheme.expand,
+                initialChildSize: sheetTheme.initialChildSize,
+                maxChildSize: sheetTheme.maxChildSize,
+                minChildSize: sheetTheme.minChildSize,
+                shouldCloseOnMinExtent: sheetTheme.shouldCloseOnMinExtent,
+                snap: sheetTheme.snap,
+                snapAnimationDuration: sheetTheme.snapAnimationDuration,
+                snapSizes: sheetTheme.snapSizes,
+                builder: (_, controller) {
+                  return StickerEditor2(
+                    configs: configs,
+                    scrollController: controller,
+                  );
+                },
+              ),
+            )
+          );
+        },
       ),
     );
     ServicesBinding.instance.keyboard.addHandler(_onKeyEvent);
