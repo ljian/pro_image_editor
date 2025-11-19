@@ -1854,7 +1854,7 @@ class ProImageEditorState extends State<ProImageEditor>
             child: DraggableScrollableSheet(
               expand: sheetTheme.expand,
               initialChildSize: 0.7, // 设置为 0.7 (70%)
-              maxChildSize: 0.7,     // 最大大小也设为 70%
+              maxChildSize: 1,     // 最大大小也设为 70%
               minChildSize: 0.3,     // 最小大小
               builder: (_, controller) {
                 return StickerEditor(
@@ -1897,7 +1897,7 @@ class ProImageEditorState extends State<ProImageEditor>
             child: DraggableScrollableSheet(
               expand: sheetTheme.expand,
               initialChildSize: 0.7, // 设置为 0.7 (70%)
-              maxChildSize: 0.7,     // 最大大小也设为 70%
+              maxChildSize: 1,     // 最大大小也设为 70%
               minChildSize: 0.3,     // 最小大小
               builder: (_, controller) {
                 return StickerEditor2(
