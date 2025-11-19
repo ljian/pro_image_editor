@@ -1850,25 +1850,18 @@ class ProImageEditorState extends State<ProImageEditor>
       useSafeArea: true,
       builder: (context2) => LayoutBuilder(
         builder: (context, constraints) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.7,
-            child: SafeArea(
-              child: DraggableScrollableSheet(
-                expand: sheetTheme.expand,
-                initialChildSize: sheetTheme.initialChildSize,
-                maxChildSize: sheetTheme.maxChildSize,
-                minChildSize: sheetTheme.minChildSize,
-                shouldCloseOnMinExtent: sheetTheme.shouldCloseOnMinExtent,
-                snap: sheetTheme.snap,
-                snapAnimationDuration: sheetTheme.snapAnimationDuration,
-                snapSizes: sheetTheme.snapSizes,
-                builder: (_, controller) {
-                  return StickerEditor(
-                    configs: configs,
-                    scrollController: controller,
-                  );
-                },
-              ),
+          return SafeArea(
+            child: DraggableScrollableSheet(
+              expand: sheetTheme.expand,
+              initialChildSize: 0.7, // 设置为 0.7 (70%)
+              maxChildSize: 0.7,     // 最大大小也设为 70%
+              minChildSize: 0.3,     // 最小大小
+              builder: (_, controller) {
+                return StickerEditor(
+                  configs: configs,
+                  scrollController: controller,
+                );
+              },
             ),
           );
         },
@@ -1900,26 +1893,19 @@ class ProImageEditorState extends State<ProImageEditor>
       useSafeArea: true,
       builder: (context2) => LayoutBuilder(
         builder: (context, constraints) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.7,
-            child: SafeArea(
-              child: DraggableScrollableSheet(
-                expand: sheetTheme.expand,
-                initialChildSize: sheetTheme.initialChildSize,
-                maxChildSize: sheetTheme.maxChildSize,
-                minChildSize: sheetTheme.minChildSize,
-                shouldCloseOnMinExtent: sheetTheme.shouldCloseOnMinExtent,
-                snap: sheetTheme.snap,
-                snapAnimationDuration: sheetTheme.snapAnimationDuration,
-                snapSizes: sheetTheme.snapSizes,
-                builder: (_, controller) {
-                  return StickerEditor2(
-                    configs: configs,
-                    scrollController: controller,
-                  );
-                },
-              ),
-            )
+          return SafeArea(
+            child: DraggableScrollableSheet(
+              expand: sheetTheme.expand,
+              initialChildSize: 0.7, // 设置为 0.7 (70%)
+              maxChildSize: 0.7,     // 最大大小也设为 70%
+              minChildSize: 0.3,     // 最小大小
+              builder: (_, controller) {
+                return StickerEditor2(
+                  configs: configs,
+                  scrollController: controller,
+                );
+              },
+            ),
           );
         },
       ),

@@ -169,12 +169,12 @@ class MainEditorBottombar extends StatelessWidget {
           icon: configs.tuneEditor.icons.bottomNavBar,
           onPressed: openTuneEditor,
         ),
-      if (configs.filterEditor.enabled)
+      if (configs.emojiEditor.enabled)
         _buildActionButton(
-          key: const ValueKey('open-filter-editor-btn'),
-          label: configs.i18n.filterEditor.bottomNavigationBarText,
-          icon: configs.filterEditor.icons.bottomNavBar,
-          onPressed: openFilterEditor,
+          key: const ValueKey('open-emoji-editor-btn'),
+          label: configs.i18n.emojiEditor.bottomNavigationBarText,
+          icon: configs.emojiEditor.icons.bottomNavBar,
+          onPressed: openEmojiEditor,
         ),
       if (configs.stickerEditor2.enabled)
         _buildActionButton(
@@ -191,19 +191,19 @@ class MainEditorBottombar extends StatelessWidget {
           icon: configs.stickerEditor.icons.bottomNavBar,
           onPressed: openStickerEditor,
         ),
+      if (configs.filterEditor.enabled)
+        _buildActionButton(
+          key: const ValueKey('open-filter-editor-btn'),
+          label: configs.i18n.filterEditor.bottomNavigationBarText,
+          icon: configs.filterEditor.icons.bottomNavBar,
+          onPressed: openFilterEditor,
+        ),
       if (configs.blurEditor.enabled)
         _buildActionButton(
           key: const ValueKey('open-blur-editor-btn'),
           label: configs.i18n.blurEditor.bottomNavigationBarText,
           icon: configs.blurEditor.icons.bottomNavBar,
           onPressed: openBlurEditor,
-        ),
-      if (configs.emojiEditor.enabled)
-        _buildActionButton(
-          key: const ValueKey('open-emoji-editor-btn'),
-          label: configs.i18n.emojiEditor.bottomNavigationBarText,
-          icon: configs.emojiEditor.icons.bottomNavBar,
-          onPressed: openEmojiEditor,
         ),
     ];
   }
