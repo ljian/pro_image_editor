@@ -401,6 +401,7 @@ class ProImageEditorState extends State<ProImageEditor>
     onStateHistoryChange: () =>
         mainEditorCallbacks?.onStateHistoryChange?.call(stateManager, this),
   );
+  StateManager get stateManagerGet => stateManager;
 
   late final _stateHistoryService = MainEditorStateHistoryService(
     sizesManager: sizesManager,
