@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_background_remover/image_background_remover.dart';
 
 import '/core/constants/editor_various_constants.dart';
 import '/core/mixins/converted_configs.dart';
@@ -536,6 +537,7 @@ class ProImageEditorState extends State<ProImageEditor>
   void initState() {
     super.initState();
     _initializeVideoEditor();
+    BackgroundRemover.instance.initializeOrt();
 
     _rebuildController = StreamController.broadcast();
     _controllers = MainEditorControllers(configs, callbacks, _isVideoEditor);
@@ -583,6 +585,7 @@ class ProImageEditorState extends State<ProImageEditor>
 
   @override
   void dispose() {
+    BackgroundRemover.instance.dispose();
     _rebuildController.close();
     _controllers.dispose();
     layerInteractionManager.scaleDebounce.dispose();
@@ -681,6 +684,7 @@ class ProImageEditorState extends State<ProImageEditor>
     double? blur,
     bool heroScreenshotRequired = false,
     bool blockCaptureScreenshot = false,
+    bool? removeBackground = null,
   }) {
     List<Layer> activeLayerList = _layerCopyManager.copyLayerList(activeLayers);
 
@@ -694,6 +698,7 @@ class ProImageEditorState extends State<ProImageEditor>
                 : activeLayerList),
         filters: filters ?? [],
         tuneAdjustments: tuneAdjustments ?? [],
+        removeBackground: removeBackground
       ),
       historyLimit: stateHistoryConfigs.stateHistoryLimit,
       enableScreenshotLimit: imageGenerationConfigs.enableBackgroundGeneration,

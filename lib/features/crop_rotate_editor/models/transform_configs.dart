@@ -50,7 +50,6 @@ class TransformConfigs {
     required this.flipY,
     required this.offset,
     this.cropMode = CropMode.rectangular,
-    this.removeBackgroundOriginalImage,
   });
 
   /// Creates a [TransformConfigs] instance from a map.
@@ -156,7 +155,6 @@ class TransformConfigs {
   /// indicating clockwise rotation and negative values indicating
   /// counter-clockwise rotation.
   final double angle;
-  final Uint8List? removeBackgroundOriginalImage;
 
   /// The user-defined scaling factor.
   ///

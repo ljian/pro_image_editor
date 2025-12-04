@@ -129,6 +129,10 @@ class StateManager {
             .blur ??
         0.0;
 
+    _removeBackground = activeHistory.lastWhere((item) => item.removeBackground != null,
+        orElse: EditorStateHistory.new)
+        .removeBackground ?? null;
+
     onStateHistoryChange?.call();
 
     if (_backgroundImages[historyPointer] != null) {
@@ -170,10 +174,12 @@ class StateManager {
   /// The value is represented as a `double`, where `0.0` indicates no blur,
   /// and higher values correspond to increasing blur intensity.
   double _activeBlur = 0.0;
+  bool? _removeBackground = null;
 
   /// A getter that returns the current blur value.
   /// This allows you to query the active blur level applied to the image.
   double get activeBlur => _activeBlur;
+  bool? get removeBackground => _removeBackground;
 
   /// Get the list of layers from the current image editor changes.
   List<Layer> activeLayers = [];

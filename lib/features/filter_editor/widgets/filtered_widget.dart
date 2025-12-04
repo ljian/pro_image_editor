@@ -1,10 +1,13 @@
 // Dart imports:
+import 'dart:developer' as developer;
 import 'dart:ui';
 
 // Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:image_background_remover/image_background_remover.dart';
 
 // Project imports:
+import '../../../core/utils/image_converter.dart';
 import '/core/models/editor_configs/pro_image_editor_configs.dart';
 import '/core/models/editor_image.dart';
 import '/shared/widgets/auto_image.dart';
@@ -13,7 +16,7 @@ import '../types/filter_matrix.dart';
 import 'filter_generator.dart';
 
 /// Represents an image where filters and blur factors can be applied.
-class FilteredWidget extends StatelessWidget {
+class FilteredWidget extends StatefulWidget {
   /// Constructor for creating an instance of FilteredImage.
   const FilteredWidget({
     super.key,
@@ -28,6 +31,7 @@ class FilteredWidget extends StatelessWidget {
     this.image,
     this.videoPlayer,
     this.enableCachedSize = false,
+    this.removeBackground,
   }) : assert(image != null || videoPlayer != null,
             'Image and video player cannot be null');
 
@@ -68,24 +72,36 @@ class FilteredWidget extends StatelessWidget {
   /// Indicate to the engine that the image must be decoded at the specified
   /// size.
   final bool enableCachedSize;
+  final bool? removeBackground;
 
+  @override
+  State<FilteredWidget> createState() => _FilteredWidgetState();
+}
+
+class _FilteredWidgetState extends State<FilteredWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: width,
-      height: height,
+      width: widget.width,
+      height: widget.height,
       child: Stack(
         // StackFit.expand is important for [transformed_content_generator.dart]
         fit: StackFit.expand,
         alignment: Alignment.center,
         children: [
           ColorFilterGenerator(
-            key: filterKey,
-            filters: filters,
-            tuneAdjustments: tuneAdjustments,
-            child: _buildContent(),
+            key: widget.filterKey,
+            filters: widget.filters,
+            tuneAdjustments: widget.tuneAdjustments,
+            child: FutureBuilder<Widget>(future: _buildContent(context), builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+              if (snapshot.hasData) {
+                return snapshot.data!;
+              } else {
+                return _buildContentOrigin(context, widget.image!);
+              }
+            }),
           ),
-          if (blurFactor > 0) _buildBlur(),
+          if (widget.blurFactor > 0) _buildBlur(),
         ],
       ),
     );
@@ -94,25 +110,43 @@ class FilteredWidget extends StatelessWidget {
   Widget _buildBlur() {
     return ClipRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: blurFactor, sigmaY: blurFactor),
+        filter: ImageFilter.blur(sigmaX: widget.blurFactor, sigmaY: widget.blurFactor),
         child: SizedBox(
-          width: width,
-          height: height,
+          width: widget.width,
+          height: widget.height,
         ),
       ),
     );
   }
 
-  Widget _buildContent() {
-    if (videoPlayer != null) return videoPlayer!;
+  Future<Widget> _buildContent(BuildContext context) async {
+    developer.log("BackgroundRemover.instance.removeBg ${widget.removeBackground}");
+    EditorImage? imageResult = widget.image;
+    if (widget.removeBackground != null) {
+      final resultImage = await BackgroundRemover.instance.removeBg(
+        await widget.image!.safeByteArray(context),
+        threshold: 0.5,
+        enhanceEdges: true,
+        smoothMask: true,
+      );
+      imageResult = EditorImage(byteArray: await ImageConverter.instance.uiImageToImageBytes(
+        resultImage,
+        context: context,
+      ));
+    }
 
+    return _buildContentOrigin(context, imageResult!);
+  }
+
+  Widget _buildContentOrigin(BuildContext context, EditorImage imageResult) {
+    if (widget.videoPlayer != null) return widget.videoPlayer!;
     return AutoImage(
-      image!,
-      enableCachedSize: enableCachedSize,
-      fit: fit,
-      width: width,
-      height: height,
-      configs: configs,
+      imageResult,
+      enableCachedSize: widget.enableCachedSize,
+      fit: widget.fit,
+      width: widget.width,
+      height: widget.height,
+      configs: widget.configs,
     );
   }
 }

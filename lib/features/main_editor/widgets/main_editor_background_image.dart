@@ -78,6 +78,7 @@ class MainEditorBackgroundImage extends StatelessWidget {
                 filters: stateManager.activeFilters,
                 tuneAdjustments: stateManager.activeTuneAdjustments,
                 blurFactor: stateManager.activeBlur,
+                removeBackground: stateManager.removeBackground,
               ),
             ),
     );

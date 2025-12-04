@@ -20,10 +20,12 @@ class EditorStateHistory {
     this.filters = const [],
     this.tuneAdjustments = const [],
     this.transformConfigs,
+    this.removeBackground
   });
 
   /// The blur factor.
   final double? blur;
+  final bool? removeBackground;
 
   /// The list of layers.
   final List<Layer> layers;
@@ -50,6 +52,7 @@ class EditorStateHistory {
     FilterMatrix? filters,
     List<TuneAdjustmentMatrix>? tuneAdjustments,
     TransformConfigs? transformConfigs,
+    bool? removeBackground
   }) {
     return EditorStateHistory(
       blur: blur ?? this.blur,
@@ -57,6 +60,7 @@ class EditorStateHistory {
       filters: filters ?? this.filters,
       tuneAdjustments: tuneAdjustments ?? this.tuneAdjustments,
       transformConfigs: transformConfigs ?? this.transformConfigs,
+      removeBackground: removeBackground ?? this.removeBackground,
     );
   }
 
@@ -65,7 +69,7 @@ class EditorStateHistory {
     if (identical(this, other)) return true;
 
     return other is EditorStateHistory &&
-        other.blur == blur &&
+        other.blur == blur && other.removeBackground == removeBackground &&
         listEquals(other.layers, layers) &&
         listEquals(other.filters, filters) &&
         listEquals(other.tuneAdjustments, tuneAdjustments) &&
@@ -78,6 +82,6 @@ class EditorStateHistory {
         layers.hashCode ^
         filters.hashCode ^
         tuneAdjustments.hashCode ^
-        transformConfigs.hashCode;
+        transformConfigs.hashCode ^ removeBackground.hashCode;
   }
 }

@@ -1,4 +1,5 @@
 // Dart imports:
+import 'dart:developer' as developer;
 import 'dart:math';
 
 // Flutter imports:
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_background_remover/image_background_remover.dart';
 import 'package:pro_image_editor/pro_image_editor.dart';
 
 // Project imports:
@@ -667,7 +669,30 @@ class _CustomWidgetsExampleState extends State<CustomWidgetsExample>
                         size: 22.0,
                         color: Colors.amber,
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                        // editor.addHistory(removeBackground: true);
+
+                        final bytes = await editor.editorImage?.safeByteArray(context);
+                        if (bytes == null) {
+                          return;
+                        }
+                        developer.log("removeBackground begin $bytes");
+                        final resultImage = await BackgroundRemover.instance.removeBg(
+                          bytes,
+                          threshold: 0.5,
+                          enhanceEdges: true,
+                          smoothMask: true,
+                        );
+                        developer.log("removeBackground begin1");
+                        final _processedImageBytes = await ImageConverter.instance.uiImageToImageBytes(
+                          resultImage,
+                          context: context,
+                        );
+                        developer.log("removeBackground result: $_processedImageBytes");
+                        editor.stateManagerGet.activeBackgroundImage = EditorImage(byteArray: _processedImageBytes);
+                        // editor.stateManagerGet.addHistory(EditorStateHistory());
+                        setState(() { });
+                      },
                     ),
                     FlatIconTextButton(
                       label: Text('Crop/ Rotate', style: _bottomTextStyle),
