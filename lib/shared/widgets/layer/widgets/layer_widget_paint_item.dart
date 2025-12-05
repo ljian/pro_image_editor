@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '/core/models/editor_configs/paint_editor/paint_editor_configs.dart';
 import '/core/models/layers/paint_layer.dart';
 import '/features/paint_editor/enums/paint_editor_enum.dart';
 import '/features/paint_editor/widgets/draw_paint_item.dart';
@@ -11,18 +13,15 @@ class LayerWidgetPaintItem extends StatelessWidget {
   const LayerWidgetPaintItem({
     super.key,
     required this.layer,
-    this.scale = 1.0,
     this.isSelected = false,
     this.enableHitDetection = false,
     this.willChange = false,
     this.onHitChanged,
+    required this.paintEditorConfigs,
   });
 
   /// The paint layer represented by this widget.
   final PaintLayer layer;
-
-  /// The scaling factor applied to the paint layer.
-  final double scale;
 
   /// Whether the paint layer is currently selected.
   final bool isSelected;
@@ -34,6 +33,9 @@ class LayerWidgetPaintItem extends StatelessWidget {
 
   /// Whether hit detection is enabled for this layer.
   final bool enableHitDetection;
+
+  /// Configuration settings for the paint editor.
+  final PaintEditorConfigs paintEditorConfigs;
 
   /// Callback function that is triggered when a hit status changes.
   ///
@@ -51,12 +53,19 @@ class LayerWidgetPaintItem extends StatelessWidget {
         isComplex: layer.item.mode == PaintMode.freeStyle,
         painter: DrawPaintItem(
           item: layer.item,
-          scale: scale,
+          scale: layer.scale,
           selected: isSelected,
           enabledHitDetection: enableHitDetection,
           onHitChanged: onHitChanged,
+          paintEditorConfigs: paintEditorConfigs,
         ),
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    layer.debugFillProperties(properties);
   }
 }

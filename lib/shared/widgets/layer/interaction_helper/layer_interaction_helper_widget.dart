@@ -1,6 +1,7 @@
 // Flutter imports:
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '/core/mixins/converted_configs.dart';
@@ -303,6 +304,7 @@ class _LayerInteractionHelperWidgetState
         return Positioned(
           width: paddedWidth,
           height: paddedHeight,
+          left: 0,
           child: ValueListenableBuilder(
               valueListenable: _isOverlayVisibleNotifier,
               builder: (_, isVisible, __) {
@@ -445,5 +447,44 @@ class _LayerInteractionHelperWidgetState
             background: layerInteraction.style.buttonRemoveBackground,
           ),
         );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+
+    properties
+      ..add(DiagnosticsProperty<Layer>('layer', widget.layer))
+      ..add(DiagnosticsProperty<Widget>('child', widget.child))
+      ..add(
+        FlagProperty('selected', value: widget.selected, ifTrue: 'selected'),
+      )
+      ..add(FlagProperty('isInteractive',
+          value: widget.isInteractive, ifTrue: 'interactive'))
+      ..add(
+        FlagProperty('forceIgnoreGestures',
+            value: widget.forceIgnoreGestures, ifTrue: 'force ignore gestures'),
+      )
+      ..add(
+        FlagProperty('enableVisibleOverlay',
+            value: widget.enableVisibleOverlay,
+            ifTrue: 'visible overlay enabled'),
+      )
+      ..add(
+        ObjectFlagProperty<Function()>.has('onEditLayer', widget.onEditLayer),
+      )
+      ..add(
+        ObjectFlagProperty<Function()>.has('onDuplicate', widget.onDuplicate),
+      )
+      ..add(ObjectFlagProperty<Function()>.has(
+          'onRemoveLayer', widget.onRemoveLayer))
+      ..add(ObjectFlagProperty<Function(PointerDownEvent)>.has(
+          'onScaleRotateDown', widget.onScaleRotateDown))
+      ..add(ObjectFlagProperty<Function(PointerUpEvent)>.has(
+          'onScaleRotateUp', widget.onScaleRotateUp))
+      ..add(ObjectFlagProperty<Function()>.has(
+          'onGroupLayers', widget.onGroupLayers))
+      ..add(ObjectFlagProperty<Function()>.has(
+          'onUngroupLayers', widget.onUngroupLayers));
   }
 }

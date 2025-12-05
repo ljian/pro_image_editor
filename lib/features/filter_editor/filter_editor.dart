@@ -263,6 +263,7 @@ class FilterEditorState extends State<FilterEditor>
       data: theme.copyWith(
           tooltipTheme: theme.tooltipTheme.copyWith(preferBelow: true)),
       child: ExtendedPopScope(
+        canPop: filterEditorConfigs.enableGesturePop,
         child: AnnotatedRegion<SystemUiOverlayStyle>(
           value: filterEditorConfigs.style.uiOverlayStyle,
           child: SafeArea(
@@ -365,6 +366,7 @@ class FilterEditorState extends State<FilterEditor>
                 configs: configs,
                 image: editorImage,
                 videoPlayer: videoController?.videoPlayer,
+                blankSize: initConfigs.mainImageSize,
                 filters: _getActiveFilters(),
                 tuneAdjustments: appliedTuneAdjustments,
                 blurFactor: appliedBlurFactor,
@@ -449,5 +451,43 @@ class FilterEditorState extends State<FilterEditor>
         ),
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty<FilterEditorInitConfigs>(
+        'initConfigs',
+        widget.initConfigs,
+      ))
+      ..add(DiagnosticsProperty<EditorImage?>(
+        'editorImage',
+        widget.editorImage,
+      ))
+      ..add(DiagnosticsProperty<ProVideoController?>(
+        'videoController',
+        widget.videoController,
+      ))
+      ..add(DiagnosticsProperty<FilterModel>(
+        'selectedFilter',
+        _selectedFilter,
+      ))
+      ..add(DoubleProperty(
+        'filterOpacity',
+        _filterOpacity,
+      ))
+      ..add(IterableProperty<TuneAdjustmentMatrix>(
+        'appliedTuneAdjustments',
+        appliedTuneAdjustments,
+      ))
+      ..add(DoubleProperty(
+        'appliedBlurFactor',
+        appliedBlurFactor,
+      ))
+      ..add(IterableProperty<List<double>>(
+        'appliedFilters',
+        appliedFilters,
+      ));
   }
 }

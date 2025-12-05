@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '/pro_image_editor.dart';
@@ -31,6 +32,7 @@ class _PaintEditorLayerEditorState extends State<PaintEditorLayerEditor> {
   late final PaintLayer _layer = widget.layer;
 
   PaintedModel get _paintItem => _layer.item;
+  late final _style = _configs.paintEditor.style;
 
   void _setFillState(bool enableFill) {
     _layer.item = _paintItem.copyWith(fill: enableFill);
@@ -55,19 +57,24 @@ class _PaintEditorLayerEditorState extends State<PaintEditorLayerEditor> {
   @override
   Widget build(BuildContext context) {
     return ExtendedPopScope(
-      child: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shrinkWrap: true,
-        children: [
-          _buildPainting(),
-          _buildBarColorPicker(),
-          const SizedBox(height: 24),
-          _buildOpacity(),
-          _buildStrokeWidthSlider(),
-          if (_paintItem.canBeFilled) _buildFillItem(),
-          const SizedBox(height: 8),
-          _buildAction(),
-        ],
+      child: DefaultTextStyle(
+        style: DefaultTextStyle.of(context).style.copyWith(
+              color: _style.editSheetColor,
+            ),
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shrinkWrap: true,
+          children: [
+            _buildPainting(),
+            _buildBarColorPicker(),
+            const SizedBox(height: 24),
+            _buildOpacity(),
+            _buildStrokeWidthSlider(),
+            if (_paintItem.canBeFilled) _buildFillItem(),
+            const SizedBox(height: 8),
+            _buildAction(),
+          ],
+        ),
       ),
     );
   }
@@ -80,10 +87,8 @@ class _PaintEditorLayerEditorState extends State<PaintEditorLayerEditor> {
     return Container(
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
-        color: _configs.paintEditor.style.editSheetPreviewAreaColor,
-        borderRadius: BorderRadius.circular(
-          _configs.paintEditor.style.editSheetPreviewAreaRadius,
-        ),
+        color: _style.editSheetPreviewAreaColor,
+        borderRadius: BorderRadius.circular(_style.editSheetPreviewAreaRadius),
       ),
       padding: const EdgeInsets.all(7),
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -94,6 +99,7 @@ class _PaintEditorLayerEditorState extends State<PaintEditorLayerEditor> {
           child: LayerWidgetPaintItem(
             willChange: true,
             layer: _layer,
+            paintEditorConfigs: _configs.paintEditor,
           ),
         ),
       ),
@@ -223,5 +229,23 @@ class _PaintEditorLayerEditorState extends State<PaintEditorLayerEditor> {
         ],
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+
+    properties
+      ..add(DiagnosticsProperty<PaintLayer>('layer', widget.layer))
+      ..add(
+          DiagnosticsProperty<ProImageEditorConfigs>('configs', widget.configs))
+      ..add(EnumProperty<PaintMode>('mode', _paintItem.mode))
+      ..add(ColorProperty('color', _paintItem.color))
+      ..add(DoubleProperty('strokeWidth', _paintItem.strokeWidth))
+      ..add(DoubleProperty('opacity', _layer.opacity))
+      ..add(FlagProperty('fill', value: _paintItem.fill, ifTrue: 'filled'))
+      ..add(FlagProperty('canBeFilled',
+          value: _paintItem.canBeFilled, ifTrue: 'can be filled'))
+      ..add(DiagnosticsProperty<Size>('rawSize', _layer.rawSize));
   }
 }

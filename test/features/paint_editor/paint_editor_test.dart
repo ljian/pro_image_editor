@@ -231,6 +231,9 @@ void main() {
       key.currentState!.setMode(PaintMode.dashLine);
       expect(key.currentState!.paintMode, PaintMode.dashLine);
 
+      key.currentState!.setMode(PaintMode.dashDotLine);
+      expect(key.currentState!.paintMode, PaintMode.dashDotLine);
+
       key.currentState!.setMode(PaintMode.arrow);
       expect(key.currentState!.paintMode, PaintMode.arrow);
     });
@@ -287,6 +290,7 @@ void main() {
         PaintedModel(
           mode: PaintMode.rect,
           offsets: [const Offset(0, 0), const Offset(100, 100)],
+          erasedOffsets: [],
           color: Colors.red,
           strokeWidth: 5,
           opacity: 1,
@@ -309,6 +313,7 @@ void main() {
           PaintedModel(
             mode: PaintMode.rect,
             offsets: [const Offset(0, 0), const Offset(100, 100)],
+            erasedOffsets: [],
             color: Colors.red,
             strokeWidth: 5,
             opacity: 1,
@@ -342,6 +347,7 @@ void main() {
           PaintedModel(
             mode: PaintMode.rect,
             offsets: [const Offset(0, 0), const Offset(100, 100)],
+            erasedOffsets: [],
             color: Colors.red,
             strokeWidth: 5,
             opacity: 1,

@@ -1,3 +1,6 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+// TODO: Remove the deprecated values when releasing version 12.0.0.
+
 import 'dart:async';
 import 'dart:math';
 
@@ -27,8 +30,10 @@ import '/shared/widgets/layer/layer_stack.dart';
 import '/shared/widgets/slider_bottom_sheet.dart';
 import '/shared/widgets/transform/transformed_content_generator.dart';
 import '../filter_editor/widgets/filtered_widget.dart';
+import '../main_editor/services/layer_copy_manager.dart';
 import 'controllers/paint_controller.dart';
 import 'models/paint_editor_response_model.dart';
+import 'models/paint_mode_helper_model.dart';
 import 'services/paint_desktop_interaction_manager.dart';
 import 'widgets/paint_canvas.dart';
 
@@ -62,8 +67,7 @@ class PaintEditor extends StatefulWidget
     this.paintOnly = false,
     this.editorImage,
     this.videoController,
-  }) : assert(editorImage != null || videoController != null,
-            'Either editorImage or videoController must be provided.');
+  });
 
   /// Constructs a `PaintEditor` widget with image data loaded from memory.
   factory PaintEditor.memory(
@@ -243,73 +247,17 @@ class PaintEditorState extends State<PaintEditor>
   /// Get the active selected color.
   Color get activeColor => paintCtrl.color;
 
+  /// Indicates the eraser mode.
+  late EraserMode eraserMode = configs.paintEditor.eraserMode;
+
+  /// The size of the eraser tool in pixels.
+  late double eraserRadius = configs.paintEditor.eraserSize;
+
   /// A list of [PaintModeBottomBarItem] representing the available drawing
   /// modes in the paint editor.
   /// The list is dynamically generated based on the configuration settings in
   /// the [PaintEditorConfigs] object.
-  List<PaintModeBottomBarItem> get paintModes => [
-        if (paintEditorConfigs.enableModeFreeStyle)
-          PaintModeBottomBarItem(
-            mode: PaintMode.freeStyle,
-            icon: paintEditorConfigs.icons.freeStyle,
-            label: i18n.paintEditor.freestyle,
-          ),
-        if (paintEditorConfigs.enableModeArrow)
-          PaintModeBottomBarItem(
-            mode: PaintMode.arrow,
-            icon: paintEditorConfigs.icons.arrow,
-            label: i18n.paintEditor.arrow,
-          ),
-        if (paintEditorConfigs.enableModeLine)
-          PaintModeBottomBarItem(
-            mode: PaintMode.line,
-            icon: paintEditorConfigs.icons.line,
-            label: i18n.paintEditor.line,
-          ),
-        if (paintEditorConfigs.enableModeRect)
-          PaintModeBottomBarItem(
-            mode: PaintMode.rect,
-            icon: paintEditorConfigs.icons.rectangle,
-            label: i18n.paintEditor.rectangle,
-          ),
-        if (paintEditorConfigs.enableModeCircle)
-          PaintModeBottomBarItem(
-            mode: PaintMode.circle,
-            icon: paintEditorConfigs.icons.circle,
-            label: i18n.paintEditor.circle,
-          ),
-        if (paintEditorConfigs.enableModeDashLine)
-          PaintModeBottomBarItem(
-            mode: PaintMode.dashLine,
-            icon: paintEditorConfigs.icons.dashLine,
-            label: i18n.paintEditor.dashLine,
-          ),
-        if (paintEditorConfigs.enableModePolygon)
-          PaintModeBottomBarItem(
-            mode: PaintMode.polygon,
-            icon: paintEditorConfigs.icons.polygon,
-            label: i18n.paintEditor.polygon,
-          ),
-        if (paintEditorConfigs.enableModePixelate &&
-            ShaderManager.instance.isShaderFilterSupported)
-          PaintModeBottomBarItem(
-            mode: PaintMode.pixelate,
-            icon: paintEditorConfigs.icons.pixelate,
-            label: i18n.paintEditor.pixelate,
-          ),
-        if (paintEditorConfigs.enableModeBlur)
-          PaintModeBottomBarItem(
-            mode: PaintMode.blur,
-            icon: paintEditorConfigs.icons.blur,
-            label: i18n.paintEditor.blur,
-          ),
-        if (paintEditorConfigs.enableModeEraser)
-          PaintModeBottomBarItem(
-            mode: PaintMode.eraser,
-            icon: paintEditorConfigs.icons.eraser,
-            label: i18n.paintEditor.eraser,
-          ),
-      ];
+  final List<PaintModeBottomBarItem> tools = [];
 
   /// The Uint8List from the fake hero image, which is drawn when finish
   /// editing.
@@ -364,6 +312,7 @@ class PaintEditorState extends State<PaintEditor>
     _isFillMode = paintEditorConfigs.isInitiallyFilled;
 
     initStreamControllers();
+    setTools(paintEditorConfigs.tools);
 
     _bottomBarScrollCtrl = ScrollController();
     _desktopInteractionManager =
@@ -401,6 +350,118 @@ class PaintEditorState extends State<PaintEditor>
   void setState(void Function() fn) {
     rebuildController.add(null);
     super.setState(fn);
+  }
+
+  /// Sets the available painting tools for the paint editor.
+  ///
+  /// This method configures the available painting modes based on the provided
+  /// [tools] list and the current paint editor configuration settings. Only
+  /// tools that are both included in the [tools] parameter and enabled in
+  /// [paintEditorConfigs] will be added to the tool list.
+  void setTools(List<PaintMode> tools) {
+    PaintModeHelper? buildPaintModeHelper(PaintMode mode) {
+      switch (mode) {
+        case PaintMode.freeStyle:
+          if (!paintEditorConfigs.enableModeFreeStyle) return null;
+          return PaintModeHelper(
+            icon: paintEditorConfigs.icons.freeStyle,
+            label: i18n.paintEditor.freestyle,
+          );
+
+        case PaintMode.arrow:
+          if (!paintEditorConfigs.enableModeArrow) return null;
+          return PaintModeHelper(
+            icon: paintEditorConfigs.icons.arrow,
+            label: i18n.paintEditor.arrow,
+          );
+
+        case PaintMode.line:
+          if (!paintEditorConfigs.enableModeLine) return null;
+          return PaintModeHelper(
+            icon: paintEditorConfigs.icons.line,
+            label: i18n.paintEditor.line,
+          );
+
+        case PaintMode.rect:
+          if (!paintEditorConfigs.enableModeRect) return null;
+          return PaintModeHelper(
+            icon: paintEditorConfigs.icons.rectangle,
+            label: i18n.paintEditor.rectangle,
+          );
+
+        case PaintMode.circle:
+          if (!paintEditorConfigs.enableModeCircle) return null;
+          return PaintModeHelper(
+            icon: paintEditorConfigs.icons.circle,
+            label: i18n.paintEditor.circle,
+          );
+
+        case PaintMode.dashLine:
+          if (!paintEditorConfigs.enableModeDashLine) return null;
+          return PaintModeHelper(
+            icon: paintEditorConfigs.icons.dashLine,
+            label: i18n.paintEditor.dashLine,
+          );
+
+        case PaintMode.dashDotLine:
+          return PaintModeHelper(
+            icon: paintEditorConfigs.icons.dashDotLine,
+            label: i18n.paintEditor.dashDotLine,
+          );
+
+        case PaintMode.polygon:
+          if (!paintEditorConfigs.enableModePolygon) return null;
+          return PaintModeHelper(
+            icon: paintEditorConfigs.icons.polygon,
+            label: i18n.paintEditor.polygon,
+          );
+
+        case PaintMode.pixelate:
+          if (!paintEditorConfigs.enableModePixelate ||
+              !ShaderManager.instance.isShaderFilterSupported) {
+            return null;
+          }
+          return PaintModeHelper(
+            icon: paintEditorConfigs.icons.pixelate,
+            label: i18n.paintEditor.pixelate,
+          );
+
+        case PaintMode.blur:
+          if (!paintEditorConfigs.enableModeBlur) return null;
+          return PaintModeHelper(
+            icon: paintEditorConfigs.icons.blur,
+            label: i18n.paintEditor.blur,
+          );
+
+        case PaintMode.eraser:
+          if (!paintEditorConfigs.enableModeEraser) return null;
+          return PaintModeHelper(
+            icon: paintEditorConfigs.icons.eraser,
+            label: i18n.paintEditor.eraser,
+          );
+        case PaintMode.moveAndZoom:
+          if (!paintEditorConfigs.enableZoom) return null;
+          return PaintModeHelper(
+            icon: paintEditorConfigs.icons.moveAndZoom,
+            label: i18n.paintEditor.moveAndZoom,
+          );
+      }
+    }
+
+    this.tools.clear();
+    for (final tool in tools) {
+      final element = buildPaintModeHelper(tool);
+
+      if (element == null) continue;
+
+      this.tools.add(
+            PaintModeBottomBarItem(
+              mode: tool,
+              icon: element.icon,
+              label: element.label,
+            ),
+          );
+    }
   }
 
   /// Initializes stream controllers for managing UI updates.
@@ -565,9 +626,17 @@ class PaintEditorState extends State<PaintEditor>
 
         final scale = _layerStackTransformHelper.scale;
 
-        final originalLayers = widget.initConfigs.layers ?? [];
-        final newLayers = activeHistory.layers.where((layer) =>
-            originalLayers.indexWhere((el) => el.id == layer.id) < 0);
+        final originalLayers =
+            (widget.initConfigs.layers ?? []).whereType<PaintLayer>().toList();
+        final newLayers =
+            activeHistory.layers.whereType<PaintLayer>().where((layer) {
+          return originalLayers.indexWhere(
+                (el) =>
+                    el.id == layer.id &&
+                    listEquals(el.item.erasedOffsets, layer.item.erasedOffsets),
+              ) <
+              0;
+        });
         final transformedLayers = newLayers.map((layer) {
           return layer
             ..offset *= scale
@@ -659,6 +728,7 @@ class PaintEditorState extends State<PaintEditor>
     PaintedModel layer = PaintedModel(
       mode: rawLayer.mode,
       offsets: [...rawLayer.offsets],
+      erasedOffsets: [...rawLayer.erasedOffsets],
       color: rawLayer.color,
       strokeWidth: rawLayer.strokeWidth,
       fill: rawLayer.fill,
@@ -673,6 +743,7 @@ class PaintEditorState extends State<PaintEditor>
     bool onlyStrokeMode = rawLayer.mode == PaintMode.freeStyle ||
         rawLayer.mode == PaintMode.line ||
         rawLayer.mode == PaintMode.dashLine ||
+        rawLayer.mode == PaintMode.dashDotLine ||
         rawLayer.mode == PaintMode.arrow ||
         ((rawLayer.mode == PaintMode.polygon ||
                 rawLayer.mode == PaintMode.rect ||
@@ -753,6 +824,7 @@ class PaintEditorState extends State<PaintEditor>
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: paintEditorConfigs.style.uiOverlayStyle,
       child: ExtendedPopScope(
+        canPop: paintEditorConfigs.enableGesturePop,
         child: Theme(
           data: theme.copyWith(
               tooltipTheme: theme.tooltipTheme.copyWith(preferBelow: true)),
@@ -961,6 +1033,7 @@ class PaintEditorState extends State<PaintEditor>
         configs: configs,
         image: editorImage,
         videoPlayer: videoController?.videoPlayer,
+        blankSize: initConfigs.mainImageSize,
         filters: appliedFilters,
         tuneAdjustments: appliedTuneAdjustments,
         blurFactor: appliedBlurFactor,
@@ -976,7 +1049,7 @@ class PaintEditorState extends State<PaintEditor>
           .call(this, rebuildController.stream);
     }
 
-    if (paintModes.length <= 1) return const SizedBox.shrink();
+    if (tools.length <= 1) return const SizedBox.shrink();
 
     return PaintEditorBottombar(
       configs: configs.paintEditor,
@@ -984,7 +1057,7 @@ class PaintEditorState extends State<PaintEditor>
       i18n: i18n.paintEditor,
       theme: theme,
       enableZoom: _enableZoom,
-      paintModes: paintModes,
+      tools: tools,
       setMode: setMode,
       bottomBarScrollCtrl: _bottomBarScrollCtrl,
     );
@@ -1001,6 +1074,8 @@ class PaintEditorState extends State<PaintEditor>
       editorBodySize: editorBodySize,
       layerStackScaleFactor: _layerStackTransformHelper.scale,
       layers: activeHistory.layers,
+      eraserMode: eraserMode,
+      eraserRadius: eraserRadius,
       onTap: (details) =>
           callbacks.paintEditorCallbacks?.onTap?.call(this, details),
       onRemoveLayer: (removeIdList) {
@@ -1033,8 +1108,38 @@ class PaintEditorState extends State<PaintEditor>
           takeScreenshot();
         });
       },
-      onStart: () {
+      onRemovePartialStart: () {
+        LayerCopyManager copyManager = LayerCopyManager();
+
+        final updatedList =
+            activeHistory.layers.whereType<PaintLayer>().map((layer) {
+          return copyManager.createCopyPaintLayer(layer);
+        });
+
+        while (canRedo) {
+          stateHistory.removeLast();
+        }
+        stateHistory.add(PaintEditorResponse(
+          layers: [...updatedList],
+          removedLayers: [...activeHistory.removedLayers],
+        ));
+        historyPointer++;
+        setState(() {});
+        WidgetsBinding.instance.drawFrame();
+      },
+      onRemovePartialEnd: (hasRemovedAreas) {
+        if (!hasRemovedAreas) {
+          historyPointer--;
+          stateHistory.removeLast();
+          return;
+        }
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          takeScreenshot();
+        });
+      },
+      onRefresh: () {
         rebuildController.add(null);
+        _layerStackStream.add(null);
       },
       onCreated: (rawLayer) {
         _uiAppbarStream.add(null);
@@ -1049,5 +1154,36 @@ class PaintEditorState extends State<PaintEditor>
         });
       },
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+
+    properties
+      ..add(
+          DiagnosticsProperty<EditorImage?>('editorImage', widget.editorImage))
+      ..add(DiagnosticsProperty<ProVideoController?>(
+          'videoController', widget.videoController))
+      ..add(DiagnosticsProperty<PaintEditorInitConfigs>(
+          'initConfigs', widget.initConfigs))
+      ..add(FlagProperty('paintOnly',
+          value: widget.paintOnly, ifTrue: 'paint-only mode'))
+      ..add(DiagnosticsProperty<PaintController>('paintCtrl', paintCtrl))
+      ..add(FlagProperty('_isFillMode',
+          value: _isFillMode, ifTrue: 'fill mode enabled'))
+      ..add(FlagProperty('isActive', value: isActive, ifTrue: 'drawing active'))
+      ..add(EnumProperty<PaintMode>('paintMode', paintMode))
+      ..add(ColorProperty('activeColor', activeColor))
+      ..add(DoubleProperty('strokeWidth', strokeWidth))
+      ..add(DoubleProperty('opacity', opacity))
+      ..add(IntProperty('historyPointer', historyPointer))
+      ..add(IntProperty('stateHistoryLength', stateHistory.length))
+      ..add(FlagProperty('canUndo', value: canUndo, ifTrue: 'can undo'))
+      ..add(FlagProperty('canRedo', value: canRedo, ifTrue: 'can redo'))
+      ..add(FlagProperty('_enableZoom',
+          value: _enableZoom, ifTrue: 'zoom enabled'))
+      ..add(FlagProperty('hasFakeHeroBytes',
+          value: _fakeHeroBytes != null, ifTrue: 'fake hero set'));
   }
 }

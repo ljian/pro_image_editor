@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'dart:ui';
 
 // Flutter imports:
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_background_remover/image_background_remover.dart';
 
@@ -29,11 +30,12 @@ class FilteredWidget extends StatefulWidget {
     this.filterKey,
     this.fit = BoxFit.contain,
     this.image,
+    this.blankSize,
     this.videoPlayer,
     this.enableCachedSize = false,
     this.removeBackground,
-  }) : assert(image != null || videoPlayer != null,
-            'Image and video player cannot be null');
+  }) : assert(image != null || videoPlayer != null || blankSize != null,
+            'Image or videoPlayer or blankSize cannot be null');
 
   /// A key that uniquely identifies the [ColorFilterGeneratorState] widget and
   /// allows access to its state. This can be used to manipulate the state of
@@ -65,6 +67,9 @@ class FilteredWidget extends StatefulWidget {
 
   /// How the image should be inscribed into the space allocated for it.
   final BoxFit fit;
+
+  /// The size of the blank canvas when no image is present.
+  final Size? blankSize;
 
   /// The blur factor
   final double blurFactor;
@@ -138,15 +143,37 @@ class _FilteredWidgetState extends State<FilteredWidget> {
     return _buildContentOrigin(context, imageResult!);
   }
 
-  Widget _buildContentOrigin(BuildContext context, EditorImage imageResult) {
+  Widget _buildContentOrigin(BuildContext context, EditorImage? imageResult) {
     if (widget.videoPlayer != null) return widget.videoPlayer!;
-    return AutoImage(
-      imageResult,
-      enableCachedSize: widget.enableCachedSize,
-      fit: widget.fit,
-      width: widget.width,
-      height: widget.height,
-      configs: widget.configs,
-    );
+    if (imageResult != null) {
+      return AutoImage(
+        imageResult,
+        enableCachedSize: widget.enableCachedSize,
+        fit: widget.fit,
+        width: widget.width,
+        height: widget.height,
+        configs: widget.configs,
+      );
+    }
+    return SizedBox.fromSize(size: widget.blankSize);
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+
+    properties
+      ..add(DoubleProperty('width', widget.width))
+      ..add(DoubleProperty('height', widget.height))
+      ..add(DiagnosticsProperty<FilterMatrix>('filters', widget.filters))
+      ..add(IterableProperty<TuneAdjustmentMatrix>(
+          'tuneAdjustments', widget.tuneAdjustments))
+      ..add(DoubleProperty('blurFactor', widget.blurFactor))
+      ..add(EnumProperty<BoxFit>('fit', widget.fit))
+      ..add(FlagProperty('enableCachedSize',
+          value: widget.enableCachedSize, ifTrue: 'cached size enabled'))
+      ..add(DiagnosticsProperty<EditorImage?>('image', widget.image))
+      ..add(FlagProperty('hasVideoPlayer',
+          value: widget.videoPlayer != null, ifTrue: 'video player set'));
   }
 }

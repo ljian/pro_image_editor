@@ -1,6 +1,7 @@
 // Dart imports:
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '/core/mixins/converted_callbacks.dart';
@@ -28,6 +29,7 @@ class TextEditor extends StatefulWidget with SimpleConfigsAccess {
     this.callbacks = const ProImageEditorCallbacks(),
     this.configs = const ProImageEditorConfigs(),
     this.scaleFactor = 1.0,
+    this.imageSize = Size.zero,
     required this.theme,
   });
   @override
@@ -44,6 +46,9 @@ class TextEditor extends StatefulWidget with SimpleConfigsAccess {
 
   /// The text layer data to be edited, if any.
   final TextLayer? layer;
+
+  /// The size of the image being edited, used for boundary text wrapping.
+  final Size imageSize;
 
   /// A factor by which the textfield is scaled.
   ///
@@ -85,9 +90,15 @@ class TextEditorState extends State<TextEditor>
   late double _fontScale;
   final double _cursorWidth = 2.0;
 
-  double? get _maxTextWidth => textEditorConfigs.enableAutoOverflow
-      ? editorBodySize.width - 32 - _cursorWidth
-      : null;
+  double? get _maxTextWidth {
+    if (textEditorConfigs.enableImageBoundaryTextWrap &&
+        widget.imageSize != Size.zero) {
+      return widget.imageSize.width - 32 - _cursorWidth;
+    }
+    return textEditorConfigs.enableAutoOverflow
+        ? editorBodySize.width - 32 - _cursorWidth
+        : null;
+  }
 
   /// Gets the primary color.
   Color get primaryColor => _primaryColor;
@@ -312,8 +323,10 @@ class TextEditorState extends State<TextEditor>
         colorMode: backgroundColorMode,
         textStyle: selectedTextStyle,
         customSecondaryColor: _secondaryColor != null,
-        maxTextWidth:
-            textEditorConfigs.enableAutoOverflow ? _maxTextWidth : null,
+        maxTextWidth: (textEditorConfigs.enableAutoOverflow ||
+                textEditorConfigs.enableImageBoundaryTextWrap)
+            ? _maxTextWidth
+            : null,
       );
 
       Navigator.of(context).pop(layer);
@@ -328,6 +341,7 @@ class TextEditorState extends State<TextEditor>
     return LayoutBuilder(
       builder: (context, constraints) {
         return ExtendedPopScope(
+          canPop: textEditorConfigs.enableGesturePop,
           child: Theme(
             data: widget.theme.copyWith(
                 tooltipTheme:
@@ -394,7 +408,7 @@ class TextEditorState extends State<TextEditor>
 
       return GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: done,
+        onTap: textEditorConfigs.enableTapOutsideToSave ? done : null,
         child: Stack(
           children: [
             if (textEditorConfigs.widgets.bodyItems != null)
@@ -454,5 +468,26 @@ class TextEditorState extends State<TextEditor>
       maxWidth: _maxTextWidth ?? double.infinity,
       cursorWidth: _cursorWidth,
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+
+    properties
+      ..add(StringProperty('heroTag', widget.heroTag))
+      ..add(DoubleProperty('scaleFactor', widget.scaleFactor))
+      ..add(DiagnosticsProperty<TextLayer?>('layer', widget.layer))
+      ..add(DiagnosticsProperty<Size>('imageSize', widget.imageSize))
+      ..add(DiagnosticsProperty<ThemeData>('theme', widget.theme))
+      ..add(DiagnosticsProperty<TextAlign>('align', align))
+      ..add(DiagnosticsProperty<TextStyle>(
+          'selectedTextStyle', selectedTextStyle))
+      ..add(EnumProperty<LayerBackgroundMode>(
+          'backgroundColorMode', backgroundColorMode))
+      ..add(DoubleProperty('fontScale', _fontScale))
+      ..add(ColorProperty('primaryColor', primaryColor))
+      ..add(ColorProperty('secondaryColor', secondaryColor))
+      ..add(DiagnosticsProperty<Size>('editorBodySize', editorBodySize));
   }
 }
