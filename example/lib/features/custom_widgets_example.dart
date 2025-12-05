@@ -131,6 +131,9 @@ class _CustomWidgetsExampleState extends State<CustomWidgetsExample>
           ),
         ),
         configs: ProImageEditorConfigs(
+          imageGeneration: ImageGenerationConfigs(
+            outputFormat: OutputFormat.png
+          ),
           designMode: platformDesignMode,
           mainEditor: MainEditorConfigs(
             enableCloseButton: !isDesktopMode(context),
@@ -672,6 +675,7 @@ class _CustomWidgetsExampleState extends State<CustomWidgetsExample>
                       onPressed: () async {
                         // editor.addHistory(removeBackground: true);
 
+                        final editor = editorKey.currentState!;
                         final bytes = await editor.editorImage?.safeByteArray(context);
                         if (bytes == null) {
                           return;
@@ -689,7 +693,7 @@ class _CustomWidgetsExampleState extends State<CustomWidgetsExample>
                           context: context,
                         );
                         developer.log("removeBackground result: $_processedImageBytes");
-                        editor.stateManagerGet.activeBackgroundImage = EditorImage(byteArray: _processedImageBytes);
+                        await editor.updateBackgroundImage(EditorImage(byteArray: _processedImageBytes));
                         // editor.stateManagerGet.addHistory(EditorStateHistory());
                         setState(() { });
                       },
