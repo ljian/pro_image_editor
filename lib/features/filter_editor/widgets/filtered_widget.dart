@@ -102,7 +102,7 @@ class _FilteredWidgetState extends State<FilteredWidget> {
               if (snapshot.hasData) {
                 return snapshot.data!;
               } else {
-                return _buildContentOrigin(context, widget.image!);
+                return _buildContentOrigin(context, widget.image);
               }
             }),
           ),
