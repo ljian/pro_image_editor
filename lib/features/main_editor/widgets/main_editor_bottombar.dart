@@ -191,7 +191,7 @@ class MainEditorBottombar extends StatelessWidget {
             case SubEditorMode.sticker2:
               if (!configs.stickerEditor2.enabled) return null;
               return _buildActionButton(
-                key: const ValueKey('open-sticker-editor-btn'),
+                key: const ValueKey('open-sticker2-editor-btn'),
                 label: configs.i18n.stickerEditor.bottomNavigationBarText2,
                 icon: configs.stickerEditor2.icons.bottomNavBar,
                 onPressed: openStickerEditor2,
