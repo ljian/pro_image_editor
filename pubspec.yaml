@@ -43,7 +43,10 @@ dependencies:
   shared_preferences: ^2.5.3
   vector_math: ^2.1.4
   web: ^1.1.1
-  image_background_remover: ^1.0.0
+  image_background_remover:
+    git:
+      url: git@github.com:ljian/image_background_remover.git
+      ref: 2ad83d5a600b59f0abf9ac96a97b4c28a23d9bdc
 
 dev_dependencies:
   flutter_test:
