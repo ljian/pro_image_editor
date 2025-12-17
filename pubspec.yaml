@@ -46,7 +46,7 @@ dependencies:
   image_background_remover:
     git:
       url: git@github.com:ljian/image_background_remover.git
-      ref: 2ad83d5a600b59f0abf9ac96a97b4c28a23d9bdc
+      ref: 8b1b731324f028a78f797776d82de95ae2675367
 
 dev_dependencies:
   flutter_test:
